@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<slideDampongAnimationLayout.SlideDampingAnimationLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/slide_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    custom:bezier_curves_color="#000000"
+    custom:bezier_curves_type="quadratic_bezier_curves"
+    tools:context="com.example.dabutaizha.slidedampinganimationactivity.SlideDampingAnimationActivity">
+
+    <ListView
+        android:id="@+id/example_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+
+</slideDampongAnimationLayout.SlideDampingAnimationLayout>
