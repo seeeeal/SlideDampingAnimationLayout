@@ -56,3 +56,6 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 #### TODO
 * 增加多种曲线类型可选
 
+#### Who used
+[juzimi](https://github.com/dabutaizha/juzimi)
+
