@@ -44,7 +44,10 @@ public class SlideDampingAnimationLayout extends FrameLayout {
     boolean rightSlide = false;
 
     int mColor;
-    private int mBezierType;
+    int mBezierType;
+    int mAllowGuest;
+    boolean mAllowLeft;
+    boolean mAllowRight;
     Paint mPathPaint;
     Path mPath;
 
@@ -74,6 +77,7 @@ public class SlideDampingAnimationLayout extends FrameLayout {
                 0);
         mColor = ta.getColor(R.styleable.SlideDampingAnimationLayout_bezier_curves_color, Color.BLACK);
         mBezierType = ta.getInt(R.styleable.SlideDampingAnimationLayout_bezier_curves_type, 1);
+        mAllowGuest = ta.getInt(R.styleable.SlideDampingAnimationLayout_allow_gesture, 2);
         init(context);
         ta.recycle();
     }
@@ -101,6 +105,13 @@ public class SlideDampingAnimationLayout extends FrameLayout {
             mBezierCurve = new QuadraticBezierCurve();
         } else {
             mBezierCurve = new CubicBezierCurve();
+        }
+
+        if ((mAllowGuest == 0) || (mAllowGuest == 2)) {
+            mAllowLeft = true;
+        }
+        if ((mAllowGuest == 1) || (mAllowGuest == 2)) {
+            mAllowRight = true;
         }
 
         setWillNotDraw(false);
@@ -214,7 +225,7 @@ public class SlideDampingAnimationLayout extends FrameLayout {
             case MotionEvent.ACTION_MOVE:
                 actionDownPoint = new PointF(event.getX(), event.getY());
 
-                if (leftSlide) {
+                if (leftSlide && mAllowLeft) {
                     bezierCurve.setStartPoint(new PointF(0, actionDownPoint.y + 150));
                     bezierCurve.setEndPoint(new PointF(0, actionDownPoint.y - 150));
                     float stretchDegree = (event.getX() * 5) / screenWidth;
@@ -265,7 +276,7 @@ public class SlideDampingAnimationLayout extends FrameLayout {
                     }
                 }
 
-                if (rightSlide) {
+                if (rightSlide && mAllowRight) {
                     bezierCurve.setStartPoint(new PointF(screenWidth, actionDownPoint.y + 150));
                     bezierCurve.setEndPoint(new PointF(screenWidth, actionDownPoint.y - 150));
                     float stretchDegree = ((screenWidth - event.getX()) * 5) / screenWidth;

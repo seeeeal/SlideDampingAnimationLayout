@@ -6,6 +6,11 @@
             <enum name="quadratic_bezier_curves" value="0" />
             <enum name="cubic_bezier_curves" value="1" />
         </attr>
+        <attr name="allow_gesture">
+            <enum name="only_left" value="0" />
+            <enum name="only_right" value="1" />
+            <enum name="both" value="2"/>
+        </attr>
     </declare-styleable>
 
 </resources>
