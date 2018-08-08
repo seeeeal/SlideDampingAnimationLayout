@@ -49,13 +49,13 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 
 <img src="http://p3z4bc5an.bkt.clouddn.com/demo_gif.gif" width="300" hegiht="300" alt=“pic1”/>
 
-#### 以实现功能
+### 已实现功能
 * 继承FrameLayout 可以左右滑动触发动画与事件
 * 可配置是否只触发单一方向动画与事件
 * 可配置颜色
-#### TODO
+### TODO
 * 增加多种曲线类型可选
 
-#### Who used
+### Who used
 [juzimi](https://github.com/dabutaizha/juzimi)
 
