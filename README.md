@@ -20,7 +20,8 @@ Usage
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:bezier_curves_color="@color/black"
-    app:bezier_curves_type="quadratic_bezier_curves">
+    app:bezier_curves_type="quadratic_bezier_curves"
+    app:allow_gesture="only_left">
   
     <--content-->
   
