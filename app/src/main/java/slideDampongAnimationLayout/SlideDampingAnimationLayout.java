@@ -123,7 +123,7 @@ public class SlideDampingAnimationLayout extends FrameLayout {
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        return (checkHandle(event) || super.onTouchEvent(event));
+        return super.onTouchEvent(event);
     }
 
     /**
@@ -218,9 +218,6 @@ public class SlideDampingAnimationLayout extends FrameLayout {
         return isBorderSliding;
     }
 
-    /**
-     * Description: 如何处理事件
-     */
     void handleEvent(MotionEvent event) {
         if (checkIsQuadratic()) {
             quadraticBezierHandleEvent(event);
