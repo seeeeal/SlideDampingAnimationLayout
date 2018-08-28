@@ -54,8 +54,7 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 * 继承FrameLayout 可以左右滑动触发动画与事件
 * 可配置是否只触发单一方向动画与事件
 * 可配置颜色
-### TODO
-* 增加多种曲线类型可选
+* 可选择二次贝塞尔与高阶贝塞尔曲线(类即刻)
 
 ### Who used
 [juzimi](https://github.com/dabutaizha/juzimi)
