@@ -1,5 +1,5 @@
 # SlideDampingAnimationLayout
-自定义View练手 低仿即刻客户端侧滑回退动画
+自定义View练手 高仿即刻客户端侧滑回退动画
 
 Gradle
 ------
