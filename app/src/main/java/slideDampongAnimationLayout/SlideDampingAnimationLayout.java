@@ -104,7 +104,8 @@ public class SlideDampingAnimationLayout extends FrameLayout {
         if (checkIsQuadratic()) {
             mBezierCurve = new QuadraticBezierCurve();
         } else {
-            mBezierCurve = new CubicBezierCurve();
+
+            mBezierCurve = new HighOrderBezierCurve();
         }
 
         if ((mAllowGuest == 0) || (mAllowGuest == 2)) {
@@ -117,45 +118,57 @@ public class SlideDampingAnimationLayout extends FrameLayout {
         setWillNotDraw(false);
     }
 
+    /**
+     *Description: 是否拦截事件
+     */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         return (checkHandle(event) || super.onTouchEvent(event));
     }
 
+    /**
+     *Description: 如何处理事件
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         handleEvent(event);
-
         mPath.reset();
         invalidate();
 
         return (checkHandle(event) || super.onTouchEvent(event));
     }
 
+    /**
+     *Description: 重绘子视图方法
+     */
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
 
         if (checkIsQuadratic()) {
-            QuadraticBezierCurve bezierCurve = (QuadraticBezierCurve) mBezierCurve;
-
+            QuadraticBezierCurve bezierCurve = (QuadraticBezierCurve)mBezierCurve;
             mPath.moveTo(bezierCurve.getStartPoint().x,
                     bezierCurve.getStartPoint().y);
-
             mPath.quadTo(bezierCurve.getControlPoint().x,
                     bezierCurve.getControlPoint().y,
                     bezierCurve.getEndPoint().x,
                     bezierCurve.getEndPoint().y);
         } else {
-            CubicBezierCurve bezierCurve = (CubicBezierCurve) mBezierCurve;
-            mPath.moveTo(bezierCurve.getStartPoint().x,
-                    bezierCurve.getStartPoint().y);
-            mPath.cubicTo(bezierCurve.getFirstControlPoint().x,
+            HighOrderBezierCurve bezierCurve = (HighOrderBezierCurve)mBezierCurve;
+            mPath.moveTo(bezierCurve.getFirstStartPoint().x,
+                    bezierCurve.getFirstStartPoint().y);
+            mPath.quadTo(bezierCurve.getFirstControlPoint().x,
                     bezierCurve.getFirstControlPoint().y,
-                    bezierCurve.getSecondControlPoint().x,
+                    bezierCurve.getFirstEndPoint().x,
+                    bezierCurve.getFirstEndPoint().y);
+            mPath.quadTo(bezierCurve.getSecondControlPoint().x,
                     bezierCurve.getSecondControlPoint().y,
-                    bezierCurve.getEndPoint().x,
-                    bezierCurve.getEndPoint().y);
+                    bezierCurve.getSecondEndPoint().x,
+                    bezierCurve.getSecondEndPoint().y);
+            mPath.quadTo(bezierCurve.getThirdControlPoint().x,
+                    bezierCurve.getThirdControlPoint().y,
+                    bezierCurve.getThirdEndPoint().x,
+                    bezierCurve.getThirdEndPoint().y);
         }
 
         canvas.drawPath(mPath, mPathPaint);
@@ -212,12 +225,11 @@ public class SlideDampingAnimationLayout extends FrameLayout {
         if (checkIsQuadratic()) {
             quadraticBezierHandleEvent(event);
         } else {
-            cubicBezierHandleEvent(event);
+            highOrderBezierHandleEvent(event);
         }
     }
 
     private void quadraticBezierHandleEvent(MotionEvent event) {
-
         QuadraticBezierCurve bezierCurve = (QuadraticBezierCurve) mBezierCurve;
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -325,7 +337,6 @@ public class SlideDampingAnimationLayout extends FrameLayout {
                         mTopLineL = mTopLineT = mTopLineR = mTopLineB = 0;
                         mBottomLineL = mBottomLineT = mBottomLineR = mBottomLineB = 0;
                     }
-
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -358,18 +369,168 @@ public class SlideDampingAnimationLayout extends FrameLayout {
         }
     }
 
+    private void highOrderBezierHandleEvent(MotionEvent event) {
+        HighOrderBezierCurve bezierCurve = (HighOrderBezierCurve) mBezierCurve;
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                actionDownPoint = new PointF(event.getX(), event.getY());
+
+                if (leftSlide && mAllowLeft) {
+                    bezierCurve.setFirstStartPoint(new PointF(0, actionDownPoint.y - 300));
+                    bezierCurve.setFirstControlPoint(new PointF(0, actionDownPoint.y - 200));
+                    bezierCurve.setThirdControlPoint(new PointF(0, actionDownPoint.y + 200));
+                    bezierCurve.setThirdEndPoint(new PointF(0, actionDownPoint.y + 300));
+                    float stretchDegree = (event.getX() * 5) / screenWidth;
+                    if (event.getX() >= screenWidth / 5) {
+                        //贝塞尔曲线控制点不再增长
+                        mPathPaint.setAlpha((int) (0.8 * 255));
+                        bezierCurve.setFirstEndPoint(new PointF(150/3, actionDownPoint.y - 100));
+                        bezierCurve.setSecondControlPoint(new PointF(150 / 13 * 10, actionDownPoint.y));
+                        bezierCurve.setSecondEndPoint(new PointF(150/3, actionDownPoint.y + 100));
+                        //直线转为折现 计算折现角度
+                        float moveRange = actionDownPoint.x - screenWidth / 5;
+                        float moveDegree = moveRange / (screenWidth / 5);
+                        int degree;
+                        if (moveDegree >= 1) {
+                            degree = 45;
+                        } else {
+                            degree = (int) (moveDegree * 45);
+                        }
+                        //修改画笔颜色 去除直线痕迹
+                        mLinePaint.setColor(Color.argb(255, 255, 255, 255));
+                        mTransverseLineL = mTransverseLineR = mTransverseLineT = mTransverseLineB = 0;
+                        //计算上半折线坐标
+                        mBottomLineL = mTopLineL = 30;
+                        mBottomLineT = mTopLineT = actionDownPoint.y;
+                        float topLineDegree = (float) (((-degree) * Math.PI) / 180);
+                        float topDegreeCos = (float) Math.cos(topLineDegree);
+                        float topDegreeSin = (float) Math.sin(topLineDegree);
+                        mTopLineR = -20 * (topDegreeSin) + 30;
+                        mTopLineB = 20 * (topDegreeCos) + event.getY();
+                        //计算下半折线坐标
+                        float bottomLineDegree = (float) (((degree + 180) * Math.PI) / 180);
+                        float bottomDegreeCos = (float) Math.cos(bottomLineDegree);
+                        float bottomDegreeSin = (float) Math.sin(bottomLineDegree);
+                        mBottomLineR = -20 * bottomDegreeSin + 30;
+                        mBottomLineB = 20 * bottomDegreeCos + event.getY();
+                    } else {
+                        //计算曲线的变化
+                        mPathPaint.setAlpha((int)(stretchDegree * 0.8 * 255));
+                        bezierCurve.setFirstEndPoint(new PointF(stretchDegree * 150/3, actionDownPoint.y - 100));
+                        bezierCurve.setSecondControlPoint(new PointF(stretchDegree * 150 / 13 * 10, actionDownPoint.y));
+                        bezierCurve.setSecondEndPoint(new PointF(stretchDegree * 150/3, actionDownPoint.y + 100));
+                        //计算横线的变化
+                        mLinePaint.setColor(Color.argb((int)(stretchDegree * 255), 255, 255, 255));
+                        float slideRangeX = stretchDegree * 30;
+                        float slideRangeY = stretchDegree * 20;
+                        mTransverseLineL = mTransverseLineR = slideRangeX;
+                        mTransverseLineT = actionDownPoint.y + slideRangeY;
+                        mTransverseLineB = actionDownPoint.y - slideRangeY;
+                        //归零折现的变化
+                        mTopLineL = mTopLineT = mTopLineR = mTopLineB = 0;
+                        mBottomLineL = mBottomLineT = mBottomLineR = mBottomLineB = 0;
+                    }
+                }
+
+                if (rightSlide && mAllowRight) {
+                    bezierCurve.setFirstStartPoint(new PointF(screenWidth, actionDownPoint.y - 300));
+                    bezierCurve.setFirstControlPoint(new PointF(screenWidth, actionDownPoint.y - 200));
+                    bezierCurve.setThirdControlPoint(new PointF(screenWidth, actionDownPoint.y + 200));
+                    bezierCurve.setThirdEndPoint(new PointF(screenWidth, actionDownPoint.y + 300));
+                    float stretchDegree = ((screenWidth - event.getX()) * 5) / screenWidth;
+                    if (screenWidth - event.getX() >= screenWidth / 5) {
+                        //贝塞尔曲线控制点不再增长
+                        mPathPaint.setAlpha((int)(0.8 * 255));
+                        bezierCurve.setFirstEndPoint(new PointF(screenWidth - (150/3), actionDownPoint.y - 100));
+                        bezierCurve.setSecondControlPoint(new PointF(screenWidth - (150 / 13 * 10), actionDownPoint.y));
+                        bezierCurve.setSecondEndPoint(new PointF(screenWidth - (150/3), actionDownPoint.y + 100));
+                        //直线转为折现 计算折现角度
+                        float moveRange = (screenWidth - actionDownPoint.x) - screenWidth / 5;
+                        float moveDegree = moveRange / (screenWidth / 5);
+                        int degree;
+                        if (moveDegree >= 1) {
+                            degree = 45;
+                        } else {
+                            degree = (int) (moveDegree * 45);
+                        }
+                        //修改画笔颜色 去除直线痕迹
+                        mLinePaint.setColor(Color.argb(255, 255, 255, 255));
+                        mTransverseLineL = mTransverseLineR = mTransverseLineT = mTransverseLineB = 0;
+                        //计算上半折线坐标
+                        mBottomLineL = mTopLineL = screenWidth - 30;
+                        mBottomLineT = mTopLineT = actionDownPoint.y;
+                        float topLineDegree = (float) (((degree) * Math.PI) / 180);
+                        float topDegreeCos = (float) Math.cos(topLineDegree);
+                        float topDegreeSin = (float) Math.sin(topLineDegree);
+                        mTopLineR = -20 * (topDegreeSin) + (screenWidth - 30);
+                        mTopLineB = 20 * (topDegreeCos) + event.getY();
+                        //计算下半折线坐标
+                        float bottomLineDegree = (float) (((-degree + 180) * Math.PI) / 180);
+                        float bottomDegreeCos = (float) Math.cos(bottomLineDegree);
+                        float bottomDegreeSin = (float) Math.sin(bottomLineDegree);
+                        mBottomLineR = -20 * bottomDegreeSin + (screenWidth - 30);
+                        mBottomLineB = 20 * bottomDegreeCos + event.getY();
+                    } else {
+                        //计算曲线的变化
+                        mPathPaint.setAlpha((int)(stretchDegree * 0.8 * 255));
+                        bezierCurve.setFirstEndPoint(new PointF(screenWidth - (stretchDegree * 150/3), actionDownPoint.y - 100));
+                        bezierCurve.setSecondControlPoint(new PointF(screenWidth - (stretchDegree * 150 / 13 * 10), actionDownPoint.y));
+                        bezierCurve.setSecondEndPoint(new PointF(screenWidth - (stretchDegree * 150/3), actionDownPoint.y + 100));
+                        //计算横线的变化
+                        mLinePaint.setColor(Color.argb((int)(stretchDegree * 255), 255, 255, 255));
+                        float slideRangeX = screenWidth - (stretchDegree * 30);
+                        float slideRangeY = stretchDegree * 20;
+                        mTransverseLineL = mTransverseLineR = slideRangeX;
+                        mTransverseLineT = actionDownPoint.y + slideRangeY;
+                        mTransverseLineB = actionDownPoint.y - slideRangeY;
+                        //归零折现的变化
+                        mTopLineL = mTopLineT = mTopLineR = mTopLineB = 0;
+                        mBottomLineL = mBottomLineT = mBottomLineR = mBottomLineB = 0;
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                //还原贝塞尔曲线的控制点
+                bezierCurve.setFirstStartPoint(new PointF(0, 0));
+                bezierCurve.setFirstControlPoint(new PointF(0, 0));
+                bezierCurve.setFirstEndPoint(new PointF(0, 0));
+                bezierCurve.setSecondControlPoint(new PointF(0, 0));
+                bezierCurve.setSecondEndPoint(new PointF(0, 0));
+                bezierCurve.setThirdControlPoint(new PointF(0, 0));
+                bezierCurve.setThirdEndPoint(new PointF(0, 0));
+                //还原直线与折现的所有点
+                mTransverseLineL = mTransverseLineT = mTransverseLineR = mTransverseLineB = 0;
+                mBottomLineL = mBottomLineT = mBottomLineR = mBottomLineB = 0;
+                mTopLineL = mTopLineT = mTopLineR = mTopLineB = 0;
+                //触发事件
+                if (leftSlide) {
+                    float moveRange = actionDownPoint.x - screenWidth / 5;
+                    float moveDegree = moveRange / (screenWidth / 5);
+                    if (moveDegree > 1) {
+                        mSlideEventListener.leftEvent();
+                    }
+                }
+                if (rightSlide) {
+                    float moveRange = (screenWidth - actionDownPoint.x) - screenWidth / 5;
+                    float moveDegree = moveRange / (screenWidth / 5);
+                    if (moveDegree > 1) {
+                        mSlideEventListener.rightEvent();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     public boolean checkIsQuadratic() {
         return mBezierType == BezierCurve.QUADRATIC;
     }
 
     public void setSlideListener(SlideEventListener listener) {
         mSlideEventListener = listener;
-    }
-
-    /**
-     *Description: todo 三次贝塞尔
-     */
-    private void cubicBezierHandleEvent(MotionEvent event) {
     }
 
 }

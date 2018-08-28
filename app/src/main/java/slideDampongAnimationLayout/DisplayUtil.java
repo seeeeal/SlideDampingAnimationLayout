@@ -45,4 +45,12 @@ public class DisplayUtil {
         return displayMetrics.widthPixels;
     }
 
+    /**
+     *Description: dp转px
+     */
+    public float dp2px(final float dpValue) {
+        final float scale = mContext.getResources().getDisplayMetrics().density;
+        return dpValue * scale + 0.5f;
+    }
+
 }
