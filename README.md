@@ -46,9 +46,9 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 
 <img src="http://p3z4bc5an.bkt.clouddn.com/jike_demo_gif.gif" width="300" hegiht="300" alt=“pic0”/>
 
-仿写效果(只是简单的Path绘制填充二阶贝塞尔曲线 之后会尝试高仿即刻)
+仿写效果(分为两种 三个控制点的二阶贝塞尔和六个控制点的高阶贝塞尔曲线 下图为仿即刻的高阶贝塞尔)
 
-<img src="http://p3z4bc5an.bkt.clouddn.com/demo_gif.gif" width="300" hegiht="300" alt=“pic1”/>
+<img src="http://p3z4bc5an.bkt.clouddn.com/demo_gif2.gif" width="300" hegiht="300" alt=“pic2”/>
 
 ### 已实现功能
 * 继承FrameLayout 可以左右滑动触发动画与事件
