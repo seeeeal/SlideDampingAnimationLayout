@@ -1,12 +1,12 @@
 # SlideDampingAnimationLayout
-自定义View练手 低仿即刻客户端侧滑回退动画
+自定义View练手 高仿即刻客户端侧滑回退动画
 
 Gradle
 ------
 ```
 dependencies {
     ...
-	implementation 'com.github.dabutaizha:SlideDampingAnimationLayout:v0.8'
+    implementation 'com.github.dabutaizha:SlideDampingAnimationLayout:v1.0.0'
 }
 ```
 
@@ -46,16 +46,15 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 
 <img src="http://p3z4bc5an.bkt.clouddn.com/jike_demo_gif.gif" width="300" hegiht="300" alt=“pic0”/>
 
-仿写效果(只是简单的Path绘制填充二阶贝塞尔曲线 之后会尝试高仿即刻)
+仿写效果(分为两种 三个控制点贝塞尔曲线和六个控制点绘制的贝塞尔曲线 下图为仿即刻的效果)
 
-<img src="http://p3z4bc5an.bkt.clouddn.com/demo_gif.gif" width="300" hegiht="300" alt=“pic1”/>
+<img src="http://p3z4bc5an.bkt.clouddn.com/demo_gif2.gif" width="300" hegiht="300" alt=“pic2”/>
 
 ### 已实现功能
 * 继承FrameLayout 可以左右滑动触发动画与事件
 * 可配置是否只触发单一方向动画与事件
 * 可配置颜色
-### TODO
-* 增加多种曲线类型可选
+* 可选择两种样式的贝塞尔曲线
 
 ### Who used
 [juzimi](https://github.com/dabutaizha/juzimi)
