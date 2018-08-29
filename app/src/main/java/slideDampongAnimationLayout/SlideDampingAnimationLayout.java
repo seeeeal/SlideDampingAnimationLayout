@@ -123,7 +123,7 @@ public class SlideDampingAnimationLayout extends FrameLayout {
      */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
+        return (checkHandle(event) || super.onTouchEvent(event));
     }
 
     /**
