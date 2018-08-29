@@ -6,7 +6,7 @@ Gradle
 ```
 dependencies {
     ...
-    implementation 'com.github.dabutaizha:SlideDampingAnimationLayout:v1.0.0'
+    implementation 'com.github.dabutaizha:SlideDampingAnimationLayout:v1.0.1'
 }
 ```
 
