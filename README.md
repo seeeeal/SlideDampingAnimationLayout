@@ -44,11 +44,11 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 
 原即刻APP效果
 
-<img src="http://p3z4bc5an.bkt.clouddn.com/jike_demo_gif.gif" width="300" hegiht="300" alt=“pic0”/>
+<img src="https://s2.ax1x.com/2019/06/21/Vzygb9.gif" width="300" hegiht="300" alt=“pic0”/>
 
 仿写效果(分为两种 三个控制点贝塞尔曲线和六个控制点绘制的贝塞尔曲线 下图为仿即刻的效果)
 
-<img src="http://p3z4bc5an.bkt.clouddn.com/demo_gif2.gif" width="300" hegiht="300" alt=“pic2”/>
+<img src="https://s2.ax1x.com/2019/06/21/Vzy338.gif" width="300" hegiht="300" alt=“pic2”/>
 
 ### 已实现功能
 * 继承FrameLayout 可以左右滑动触发动画与事件
