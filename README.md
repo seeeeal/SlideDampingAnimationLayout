@@ -56,6 +56,3 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 * 可配置颜色
 * 可选择两种样式的贝塞尔曲线
 
-### Who used
-[juzimi](https://github.com/dabutaizha/juzimi)
-
