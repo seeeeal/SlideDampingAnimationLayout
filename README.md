@@ -46,7 +46,7 @@ mSlideAnimationLayout.setSlideListener(new SlideEventListener() {
 
 <img src="https://s2.ax1x.com/2019/06/21/Vzygb9.gif" width="300" hegiht="300" alt=“pic0”/>
 
-仿写效果(分为两种 三个控制点贝塞尔曲线和六个控制点绘制的贝塞尔曲线 下图为仿即刻的效果)
+仿写效果
 
 <img src="https://s2.ax1x.com/2019/06/21/Vzy338.gif" width="300" hegiht="300" alt=“pic2”/>
 
